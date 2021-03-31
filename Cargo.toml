@@ -1,0 +1,19 @@
+[package]
+name = "text-annotation"
+version = "0.1.0"
+authors = ["nbrr <nbrr@protonmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+yew = "0.17"    
+wasm-bindgen = "0.2"
+console_error_panic_hook = "0.1.6"
+log = "0.4"
+wasm-logger = "0.2"
+boolinator = "2.4"
+indexmap = { version = "1.5.2", features = ["std"] }
