@@ -10,6 +10,7 @@ pub struct CharComponent {
 pub struct Props {
     pub content: char,
     pub pos: usize,
+    pub zones: Vec<usize>,
 }
 
 pub enum Msg {}
@@ -31,9 +32,11 @@ impl Component for CharComponent {
     }
 
     fn view(&self) -> Html {
+        let mut classes : Vec<String> = self.props.zones.clone().iter().map(|i| format!("ta-zone-{}",i)).collect();
+        classes.push("ta-char".into());
         html! {
             <span
-                class=("ta-char")
+                class={classes}
                 id={format!("ta-char-pos-{}", self.props.pos)}
             >
                     {self.props.content}

@@ -1,3 +1,17 @@
 .ta-char:hover {
     background-color: red;
 }
+
+.ta-zone-0 {
+    background-color: blue
+}
+
+
+.ta-zone-1 {
+    background-color: green
+}
+
+
+.ta-zone-2 {
+    background-color: pink
+}

@@ -1,8 +1,9 @@
 use boolinator::*;
+use std::ops::Range;
 
 /// Range of indices in a text.
 // FIXME use std::ops::Range?
-#[derive(Copy,Clone)]
+#[derive(Copy,Clone, PartialEq)]
 pub struct Interval {
     beg: usize,
     end: usize,
@@ -20,5 +21,15 @@ impl Interval {
 
     pub fn intersect(&self, i: Self) -> bool {
         i.end < self.end || self.end < i.beg
+    }
+}
+
+// FIXME TryFrom
+impl From<&Range<usize>> for Interval {
+    fn from(range: &Range<usize>) -> Self {
+        Interval {
+            beg: range.start,
+            end: range.end,
+        }
     }
 }

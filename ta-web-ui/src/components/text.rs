@@ -1,16 +1,17 @@
 use boolinator::*;
 use yew::prelude::*;
 
-use super::unit::*;
+use super::char::*;
+use ta::EnrichedText;
 
 pub struct TextComponent {
-    props: Props,
+    pub props: Props,
     link: ComponentLink<Self>,
 }
 
 #[derive(PartialEq, Clone, Properties)]
 pub struct Props {
-    pub content: String,
+    pub text: EnrichedText<String>,
 }
 
 pub enum Msg {}
@@ -34,9 +35,18 @@ impl Component for TextComponent {
     fn view(&self) -> Html {
         let chars = self
             .props
+            .text
             .content
             .char_indices()
-            .map(|(ind, c)| html! {<CharComponent content={c} pos={ind}/>})
+            .map(|(ind, c)| html! {
+                <CharComponent
+                    content={c}
+                    pos={ind}
+                    zones={
+                        self.props.text.zones.iter().enumerate().filter_map(|(i, zone)| zone.contains(ind).as_some(i)).collect::<Vec<usize>>()
+                    }
+                    />
+            })
             .collect::<Html>();
 
         html! {
