@@ -5,6 +5,7 @@ use ta::{EnrichedText,Interval};
 
 use super::char::*;
 
+
 pub struct TextComponent {
     pub props: Props,
     link: ComponentLink<Self>,
@@ -20,8 +21,7 @@ pub struct Props {
 }
 
 pub enum Msg {
-    CharClick(usize),
-    CharHover(usize),
+    SelectionChange,
 }
 
 impl Component for TextComponent {
@@ -34,23 +34,8 @@ impl Component for TextComponent {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::CharClick(pos) => 
-                if let Some((p1,p2)) = self.props.ongoing_selection {
-                    if let Some(i) =Interval::new(p1.min(p2),p2.max(p1)) {
-                      self.props.intervals.push(i);
-                      self.props.ongoing_selection = None
-                    }
-                } else {
-                    self.props.ongoing_selection= Some((pos, pos))
-                },
-            Msg::CharHover(pos) => 
-                self.props.ongoing_selection = self
-                    .props
-                    .ongoing_selection
-                    .and_then(|(p1, _)| Some((p1, pos)))
-            
+            Msg::SelectionChange => true
         }
-        true
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
@@ -58,7 +43,58 @@ impl Component for TextComponent {
     }
 
     fn view(&self) -> Html {
-        let chars = self
+        let mut css : String = "".into();
+
+        css.push_str("
+        #container {
+            position: relative;
+            white-space: pre;
+        }
+
+        #bg {
+            color: rgba(0,0,0,0);
+            position:absolute;
+            left:0px;
+            top:0px;
+            z-index: -1;
+        }
+
+        .ta-zone-0 { background-color: #FDAC53; }
+        .ta-zone-1 { background-color: #9BB7D4; }
+        .ta-zone-2 { background-color: #5B55A30; }
+        "
+        .into());
+
+        let doc = yew::utils::document();
+        let select = doc.get_selection().unwrap().unwrap();
+        let anchor_offset = select.anchor_offset() as usize;
+        let focus_offset = select.focus_offset() as usize;
+        let beg = anchor_offset.min(focus_offset);
+        let end = anchor_offset.max(focus_offset);
+        let selected_text : String = self.props.text.content.clone().chars().skip(beg).take(end-beg).collect();
+
+        html! {
+            <div onmousemove=self.link.callback(|_| Msg::SelectionChange)>
+                <div>{format!("anchor offset:{:?}", anchor_offset)}</div>
+                <div>{format!("focus offset:{:?}", focus_offset)}</div>
+                <div>{format!("anchor node is focus node? :{:?}", select.anchor_node() == select.focus_node())}</div>
+                <div>{format!("range count:{:?}", select.range_count())}</div>
+                <hr/>
+                <div id="container">
+                    <style type="text/css">{css}</style>
+                    <div>{self.props.text.content.clone()}</div>
+                    <div id="bg">{self.chars()}</div>
+                </div>
+                <hr/>
+                <div style="border: 1px solid black; background-color: #e7e7e7; margin: 50px; white-space: pre;">{selected_text}</div>
+            </div>
+        }
+    }
+}
+
+impl TextComponent {
+    fn chars(&self) -> Html {
+        self
             .props
             .text
             .content
@@ -70,32 +106,8 @@ impl Component for TextComponent {
                     zones={
                         self.props.text.zones.iter().enumerate().filter_map(|(i, zone)| zone.contains(ind).as_some(i)).collect::<Vec<usize>>()
                     }
-                    selected={self.props.ongoing_selection.filter(|(p1,p2)| p1 <= &ind && p2 >= &ind || p2 <= &ind && p1 >= &ind).is_some()}
-                    parent_text={self.link.callback(|x|x)}
                     />
             })
-            .collect::<Html>();
-
-        let mut css : String = "".into();
-
-        for (i,_) in self.props.text.zones.iter().enumerate(){
-             css.push_str(format!(".ta-zone-{} {{ background-color: pink; }}", i).as_str())
-        }
-
-        css.push_str(".ta-char:hover {
-            background-color: red;
-        }
-        
-        .ta-char-selected {
-            background-color: blue;
-        }"
-        .into());
-
-        html! {
-            <div>
-                <style type="text/css">{css}</style>
-                {chars}
-            </div>
-        }
+            .collect::<Html>()
     }
 }
