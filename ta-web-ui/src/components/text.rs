@@ -1,10 +1,9 @@
 use boolinator::*;
 use yew::prelude::*;
 
-use ta::{EnrichedText,Interval};
+use ta::{EnrichedText, Interval};
 
 use super::char::*;
-
 
 pub struct TextComponent {
     pub props: Props,
@@ -34,7 +33,7 @@ impl Component for TextComponent {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::SelectionChange => true
+            Msg::SelectionChange => true,
         }
     }
 
@@ -43,9 +42,10 @@ impl Component for TextComponent {
     }
 
     fn view(&self) -> Html {
-        let mut css : String = "".into();
+        let mut css: String = "".into();
 
-        css.push_str("
+        css.push_str(
+            "
         #container {
             position: relative;
             white-space: pre;
@@ -63,30 +63,14 @@ impl Component for TextComponent {
         .ta-zone-1 { background-color: #9BB7D4; }
         .ta-zone-2 { background-color: #5B55A30; }
         "
-        .into());
-
-        let doc = yew::utils::document();
-        let select = doc.get_selection().unwrap().unwrap();
-        let anchor_offset = select.anchor_offset() as usize;
-        let focus_offset = select.focus_offset() as usize;
-        let beg = anchor_offset.min(focus_offset);
-        let end = anchor_offset.max(focus_offset);
-        let selected_text : String = self.props.text.content.clone().chars().skip(beg).take(end-beg).collect();
+            .into(),
+        );
 
         html! {
-            <div onmousemove=self.link.callback(|_| Msg::SelectionChange)>
-                <div>{format!("anchor offset:{:?}", anchor_offset)}</div>
-                <div>{format!("focus offset:{:?}", focus_offset)}</div>
-                <div>{format!("anchor node is focus node? :{:?}", select.anchor_node() == select.focus_node())}</div>
-                <div>{format!("range count:{:?}", select.range_count())}</div>
-                <hr/>
-                <div id="container">
-                    <style type="text/css">{css}</style>
-                    <div>{self.props.text.content.clone()}</div>
-                    <div id="bg">{self.chars()}</div>
-                </div>
-                <hr/>
-                <div style="border: 1px solid black; background-color: #e7e7e7; margin: 50px; white-space: pre;">{selected_text}</div>
+            <div id="container">
+                <style type="text/css">{css}</style>
+                <div>{self.props.text.content.clone()}</div>
+                <div id="bg">{self.chars()}</div>
             </div>
         }
     }
