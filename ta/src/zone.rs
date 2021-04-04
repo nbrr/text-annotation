@@ -4,8 +4,8 @@ use std::ops::Range;
 // A collection of non-overlapping intervals
 #[derive(Clone, PartialEq, Debug)]
 pub struct Zone<T> {
-    intervals: Vec<Interval>,
-    data: Option<T>,
+    pub intervals: Vec<Interval>,
+    pub data: Option<T>,
 }
 
 impl<T> Zone<T> {
@@ -17,6 +17,7 @@ impl<T> Zone<T> {
     }
 
     // FIXME error management
+    // TODO merge intersecting intervals
     pub fn insert(&mut self, interval: Interval) -> bool {
         if !self.intervals.iter().any(|i| i.intersects(interval)) {
             if let Some((index, _)) = self

@@ -25,6 +25,10 @@ impl Interval {
             || interval.contains(self.beg)
             || interval.contains(self.end)
     }
+
+    pub fn length(&self) -> usize {
+        self.end - self.beg
+    }
 }
 
 // FIXME TryFrom
