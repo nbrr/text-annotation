@@ -3,10 +3,10 @@ use std::ops::Range;
 
 /// Range of indices in a text.
 // FIXME use std::ops::Range?
-#[derive(Copy,Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Interval {
-    beg: usize,
-    end: usize,
+    pub beg: usize,
+    pub end: usize,
 }
 
 impl Interval {
@@ -19,8 +19,11 @@ impl Interval {
         self.beg <= ind && ind <= self.end
     }
 
-    pub fn intersect(&self, i: Self) -> bool {
-        i.end < self.end || self.end < i.beg
+    pub fn intersects(&self, interval: Self) -> bool {
+        self.contains(interval.beg)
+            || self.contains(interval.end)
+            || interval.contains(self.beg)
+            || interval.contains(self.end)
     }
 }
 
@@ -31,5 +34,31 @@ impl From<&Range<usize>> for Interval {
             beg: range.start,
             end: range.end,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_intersects() {
+        let interval_2_8 = Interval::new(2, 8).unwrap();
+        let interval_4_10 = Interval::new(4, 10).unwrap();
+        let interval_8_12 = Interval::new(8, 12).unwrap();
+        let interval_1_16 = Interval::new(1, 16).unwrap();
+        let interval_20_40 = Interval::new(20, 40).unwrap();
+
+        assert_eq!(interval_2_8.intersects(interval_4_10), true);
+        assert_eq!(interval_4_10.intersects(interval_2_8), true);
+
+        assert_eq!(interval_2_8.intersects(interval_8_12), true);
+        assert_eq!(interval_8_12.intersects(interval_2_8), true);
+
+        assert_eq!(interval_4_10.intersects(interval_20_40), false);
+        assert_eq!(interval_20_40.intersects(interval_4_10), false);
+
+        assert_eq!(interval_4_10.intersects(interval_1_16), true);
+        assert_eq!(interval_1_16.intersects(interval_4_10), true);
     }
 }

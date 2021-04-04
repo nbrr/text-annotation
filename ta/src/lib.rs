@@ -1,10 +1,10 @@
+mod enriched_text;
 mod interval;
 mod zone;
-mod enriched_text;
 
+pub use crate::enriched_text::*;
 pub use crate::interval::*;
 pub use crate::zone::*;
-pub use crate::enriched_text::*;
 
 #[cfg(test)]
 mod tests {
