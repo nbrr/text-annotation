@@ -44,7 +44,7 @@ impl Component for Model {
     }
 
     fn view(&self) -> Html {
-        let s: String = exstring::s.clone().into();
+        let s: String = exstring::S.clone().into();
 
         let mut et = EnrichedText::new(s);
         let zone0: Zone<String> = vec![2..8, 50..120, 135..160, 800..1333].into();

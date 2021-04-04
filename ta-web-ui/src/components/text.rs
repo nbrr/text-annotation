@@ -1,13 +1,10 @@
-use boolinator::*;
 use yew::prelude::*;
 
-use ta::{EnrichedText, Interval};
-
-use super::char::*;
+use ta::EnrichedText;
 
 pub struct TextComponent {
     pub props: Props,
-    link: ComponentLink<Self>,
+    _link: ComponentLink<Self>,
 }
 
 #[derive(PartialEq, Clone, Properties)]
@@ -17,26 +14,27 @@ pub struct Props {
     pub ongoing_selection: Option<(usize, usize)>,
 }
 
-pub enum Msg {
-    SelectionChange,
-}
+pub enum Msg {}
 
 impl Component for TextComponent {
     type Properties = Props;
     type Message = Msg;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        TextComponent { props, link }
+        TextComponent { props, _link: link }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::SelectionChange => true,
-        }
+    fn update(&mut self, _: Self::Message) -> ShouldRender {
+        true
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        true
+        if self.props != props {
+            self.props = props;
+            true
+        } else {
+            false
+        }
     }
 
     fn view(&self) -> Html {
@@ -88,29 +86,9 @@ impl Component for TextComponent {
         html! {
             <div id="container">
                 <style type="text/css">{css}</style>
-                <div>{self.props.text.content.clone()}</div>
+                <div>{&self.props.text.content}</div>
                 <div id="bg">{text_with_zones}</div>
             </div>
         }
-    }
-}
-
-impl TextComponent {
-    fn chars(&self) -> Html {
-        self
-            .props
-            .text
-            .content
-            .char_indices()
-            .map(|(ind, c)| html! {
-                <CharComponent
-                    content={c}
-                    pos={ind}
-                    zones={
-                        self.props.text.zones.iter().enumerate().filter_map(|(i, zone)| zone.contains(ind).as_some(i)).collect::<Vec<usize>>()
-                    }
-                    />
-            })
-            .collect::<Html>()
     }
 }

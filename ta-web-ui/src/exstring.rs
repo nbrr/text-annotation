@@ -1,4 +1,4 @@
-pub const s :&str="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras finibus lacus tempor augue molestie, eget porttitor elit pellentesque.
+pub const S: &str="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras finibus lacus tempor augue molestie, eget porttitor elit pellentesque.
 In hac habitasse platea dictumst. Mauris eu neque orci.
 Vivamus gravida pharetra sagittis. Pellentesque imperdiet risus neque, sit amet hendrerit augue dapibus sit amet.
 Vestibulum euismod vehicula volutpat. Curabitur ac ex et purus mollis cursus nec eget nunc.
