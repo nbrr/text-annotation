@@ -47,9 +47,9 @@ impl Component for Model {
         let s: String = exstring::s.clone().into();
 
         let mut et = EnrichedText::new(s);
-        let zone0: Zone<String> = vec![2..8, 50..120, 135..160].into();
-        let zone1: Zone<String> = vec![7..13, 200..600].into();
-        let zone2: Zone<String> = vec![(300..400)].into();
+        let zone0: Zone<String> = vec![2..8, 50..120, 135..160, 800..1333].into();
+        let zone1: Zone<String> = vec![7..13, 200..600, 900..1000].into();
+        let zone2: Zone<String> = vec![300..400, 850..910].into();
 
         et.add(zone0);
         et.add(zone1);

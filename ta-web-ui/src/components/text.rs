@@ -15,8 +15,6 @@ pub struct Props {
     pub text: EnrichedText<String>,
     #[prop_or_default]
     pub ongoing_selection: Option<(usize, usize)>,
-    #[prop_or_default]
-    pub intervals: Vec<Interval>,
 }
 
 pub enum Msg {
@@ -61,16 +59,37 @@ impl Component for TextComponent {
 
         .ta-zone-0 { background-color: #FDAC53; }
         .ta-zone-1 { background-color: #9BB7D4; }
-        .ta-zone-2 { background-color: #5B55A30; }
+        .ta-zone-2 { background-color: #B55A30; }
+
+        .ta-zone-0.ta-zone-1 { background-color: #CCB294; }
+        .ta-zone-0.ta-zone-2 { background-color: #D98342; }
+        .ta-zone-1.ta-zone-2 { background-color: #A59292; }
+        .ta-zone-0.ta-zone-1.ta-zone-2 { background-color: red; }
         "
             .into(),
         );
+
+        let partition = self.props.text.partition_by_zones();
+        let mut text_chars = self.props.text.content.chars();
+        let text_with_zones: Vec<Html> = partition
+            .iter()
+            .map(|(length, zones)| {
+                let segment_chars: String = text_chars.by_ref().take(*length).collect();
+                if !zones.is_empty() {
+                    let classes: Vec<String> =
+                        zones.iter().map(|n| format!("ta-zone-{}", n)).collect();
+                    html!(<span class={classes}>{segment_chars}</span>)
+                } else {
+                    html!(segment_chars)
+                }
+            })
+            .collect();
 
         html! {
             <div id="container">
                 <style type="text/css">{css}</style>
                 <div>{self.props.text.content.clone()}</div>
-                <div id="bg">{self.chars()}</div>
+                <div id="bg">{text_with_zones}</div>
             </div>
         }
     }
